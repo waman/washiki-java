@@ -10,7 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="washiki-java" target="13" />
+      <module name="washiki-java" target="1.5" />
     </bytecodeTargetLevel>
   </component>
 </project>
