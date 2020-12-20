@@ -1,7 +1,6 @@
 package org.waman.washiki;
 
 import java.util.function.Supplier;
-import static org.waman.washiki.WashikiUtil.*;
 
 public interface RandomPointGenerator extends Supplier<double[]>{
 
@@ -11,14 +10,15 @@ public interface RandomPointGenerator extends Supplier<double[]>{
 
     /**
      * @param x array to which coordinate of a random point on (n-1)-sphere (n >= 2) is set.
+     * @param start
      */
-    void setRandomPoint(double[] x);
+    void setRandomPoint(double[] x, int start);
 
-    default double[] newRandomPoint(){
-        double[] x = new double[getDimension()];
-        setRandomPoint(x);
-        return x;
+    default void setRandomPoint(double[] x){
+        setRandomPoint(x, 0);
     }
+
+    double[] newRandomPoint();
 
     @Override
     default double[] get() {
