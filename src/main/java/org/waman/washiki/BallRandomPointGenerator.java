@@ -12,14 +12,43 @@ public interface BallRandomPointGenerator extends RandomPointGenerator{
     }
 }
 
+class UnitBall1DRandomPointGenerator implements BallRandomPointGenerator{
+
+    private final RandomGenerator rand;
+
+    UnitBall1DRandomPointGenerator(RandomGenerator rand){
+        this.rand = rand;
+    }
+
+    @Override
+    public int getDimension() {
+        return 1;
+    }
+
+    @Override
+    public double getRadius() {
+        return 1.0;
+    }
+
+    @Override
+    public RandomGenerator getRandomGenerator() {
+        return this.rand;
+    }
+
+    @Override
+    public void setRandomPoint(double[] x, int start) {
+        x[start] = this.rand.nextDouble(-1.0, 2.0);
+    }
+}
+
 class UnitBallRandomPointGenerator implements BallRandomPointGenerator {
 
     private final UnitSphereRandomPointGenerator rand;
     private final int dim;
 
-    UnitBallRandomPointGenerator(UnitSphereRandomPointGenerator rand, int dim) {
+    UnitBallRandomPointGenerator(UnitSphereRandomPointGenerator rand) {
         this.rand = rand;
-        this.dim = dim;
+        this.dim = rand.getDimension()+1;
     }
 
     @Override
@@ -43,17 +72,50 @@ class UnitBallRandomPointGenerator implements BallRandomPointGenerator {
      */
     public void setRandomPoint(double[] x, int start) {
         this.rand.setRandomPoint(x, start);
-        scale(x, pow(getRandomGenerator().nextDouble(), 1.0 / getDimension()));
+        scale(x, pow(getRandomGenerator().nextDouble(), 1.0 / this.dim), start, this.dim);
+    }
+}
+
+class ScaleBall1DRandomPointGenerator implements BallRandomPointGenerator{
+
+    private final RandomGenerator rand;
+    private final double radius;
+
+    ScaleBall1DRandomPointGenerator(RandomGenerator rand, double radius){
+        this.rand = rand;
+        this.radius = radius;
+    }
+
+    @Override
+    public int getDimension() {
+        return 1;
+    }
+
+    @Override
+    public double getRadius() {
+        return this.radius;
+    }
+
+    @Override
+    public RandomGenerator getRandomGenerator() {
+        return this.rand;
+    }
+
+    @Override
+    public void setRandomPoint(double[] x, int start) {
+        x[start] = this.rand.nextDouble(-1.0, 2.0) * this.radius;
     }
 }
 
 class ScaleBallRandomPointGenerator implements BallRandomPointGenerator {
 
     private final UnitSphereRandomPointGenerator rand;
+    private final int dim;
     private final double radius;
 
     ScaleBallRandomPointGenerator(UnitSphereRandomPointGenerator rand, double radius) {
         this.rand = rand;
+        this.dim = rand.getDimension()+1;
         this.radius = radius;
     }
 
@@ -64,7 +126,7 @@ class ScaleBallRandomPointGenerator implements BallRandomPointGenerator {
 
     @Override
     public int getDimension() {
-        return this.rand.getDimension();
+        return this.dim;
     }
 
     @Override
@@ -78,7 +140,7 @@ class ScaleBallRandomPointGenerator implements BallRandomPointGenerator {
      */
     public void setRandomPoint(double[] x, int start){
         this.rand.setRandomPoint(x, start);
-        double s = pow(getRandomGenerator().nextDouble(), 1.0/getDimension()) * this.radius;
-        scale(x, s);
+        double s = pow(getRandomGenerator().nextDouble(), 1.0/this.dim) * this.radius;
+        scale(x, s, start, this.dim);
     }
 }

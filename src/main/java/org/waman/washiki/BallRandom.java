@@ -7,27 +7,39 @@ import static org.waman.washiki.WashikiUtil.*;
 
 public class BallRandom {
 
-    public static RandomPointGenerator newGenerator(int dim){
+    public static BallRandomPointGenerator newGenerator(int dim){
         return newGenerator(Math::random, dim);
     }
 
-    public static RandomPointGenerator newGenerator(long seed, int dim){
+    public static BallRandomPointGenerator newGenerator(long seed, int dim){
         return newGenerator(new Random(seed)::nextDouble, dim);
     }
 
-    public static RandomPointGenerator newGenerator(RandomGenerator rand, int dim){
-        return new UnitBallRandomPointGenerator(SphereRandom.newGenerator(rand, dim-1), dim);
-
+    public static BallRandomPointGenerator newGenerator(RandomGenerator rand, int dim){
+        if (dim <= 0) {
+            throw new IllegalArgumentException("The dimension argument must be positive: " + dim);
+        } else if (dim == 1) {
+            return new UnitBall1DRandomPointGenerator(rand);
+        } else {
+            return new UnitBallRandomPointGenerator(SphereRandom.newGenerator(rand, dim - 1));
+        }
     }
-    public static RandomPointGenerator newGenerator(int dim, double radius){
+
+    public static BallRandomPointGenerator newGenerator(int dim, double radius){
         return newGenerator(Math::random, dim, radius);
     }
 
-    public static RandomPointGenerator newGenerator(long seed, int dim, double radius){
+    public static BallRandomPointGenerator newGenerator(long seed, int dim, double radius){
         return newGenerator(new Random(seed)::nextDouble, dim, radius);
     }
 
-    public static RandomPointGenerator newGenerator(RandomGenerator rand, int dim, double radius){
-        return new ScaleBallRandomPointGenerator(SphereRandom.newGenerator(rand, dim-1), radius);
+    public static BallRandomPointGenerator newGenerator(RandomGenerator rand, int dim, double radius){
+        if (dim <= 0) {
+            throw new IllegalArgumentException("The dimension argument must be positive: " + dim);
+        } else if (dim == 1) {
+            return new ScaleBall1DRandomPointGenerator(rand, radius);
+        } else {
+            return new ScaleBallRandomPointGenerator(SphereRandom.newGenerator(rand, dim - 1), radius);
+        }
     }
 }

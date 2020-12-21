@@ -62,7 +62,7 @@ abstract class UnitSphereRandomPointGenerator implements SphereRandomPointGenera
 class UnitCircumferenceRandomPointGenerator extends UnitSphereRandomPointGenerator {
 
     UnitCircumferenceRandomPointGenerator(RandomGenerator rand){
-        super(rand, 2);
+        super(rand, 1);
     }
 
     @Override
@@ -154,6 +154,6 @@ class ScaleSphereRandomPointGenerator implements SphereRandomPointGenerator{
     @Override
     public void setRandomPoint(double[] x, int start) {
         this.rand.setRandomPoint(x, start);
-        scale(x, this.radius);
+        scale(x, this.radius, start, this.getDimension());
     }
 }
