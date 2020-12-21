@@ -1,16 +1,20 @@
 package org.waman.washiki;
 
 import org.junit.Test;
+import org.junit.experimental.theories.DataPoints;
+import org.junit.experimental.theories.Theories;
+import org.junit.experimental.theories.Theory;
+import org.junit.runner.RunWith;
 
+@RunWith(Theories.class)
 public class BallRandomTest {
 
-    @Test(expected = IllegalArgumentException.class)
-    public void newGeneratorMethodThrowIllegalExceptionForNegativeDim(){
-        BallRandom.newGenerator(-1);
-    }
+    @DataPoints
+    public static int[] dims = {-1, 0};
 
+    @Theory
     @Test(expected = IllegalArgumentException.class)
-    public void newGeneratorMethodThrowIllegalExceptionFor0Dim(){
-        BallRandom.newGenerator(0);
+    public void newGeneratorMethod_ThrowIllegalExceptionForNonPositiveDimension(int dim) {
+        BallRandom.newGenerator(dim);
     }
 }

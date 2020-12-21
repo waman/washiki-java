@@ -1,39 +1,64 @@
 package org.waman.washiki;
 
-import org.junit.Test;
+import org.junit.experimental.theories.DataPoints;
+import org.junit.experimental.theories.Theories;
+import org.junit.experimental.theories.Theory;
+import org.junit.runner.RunWith;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.CoreMatchers.*;
 
+@RunWith(Theories.class)
 public class SphereRandomGeneratorTest {
 
-    @Test
-    public void testDim1GeneratorCreatesLength2Array(){
+    @DataPoints
+    public static int[] dims = {1, 2, 3, 4, 5};
+
+    @Theory
+    public void getDimensionMethod_ReturnsTheProperValue(int dim){
         // SetUp
-        SphereRandomPointGenerator sut = SphereRandom.newGenerator(1);
-        // Exercise
-        double[] x = sut.newRandomPoint();
+        SphereRandomPointGenerator sut0 = SphereRandom.newGenerator(dim);
         // Verify
-        assertThat(x.length, is(2));
+        assertThat(sut0.getDimension(), is(dim));
+
+        //***** With Radius *****
+        // SetUp
+        SphereRandomPointGenerator sut1 = SphereRandom.newGenerator(dim, 2.0);
+        // Verify
+        assertThat(sut1.getDimension(), is(dim));
     }
 
-    @Test
-    public void testDim2GeneratorCreatesLength3Array(){
+    @Theory
+    public void getRadiusMethod_ReturnsTheProperValue(int dim){
         // SetUp
-        SphereRandomPointGenerator sut = SphereRandom.newGenerator(2);
-        // Exercise
-        double[] x = sut.newRandomPoint();
+        SphereRandomPointGenerator sut0 = SphereRandom.newGenerator(dim);
         // Verify
-        assertThat(x.length, is(3));
+        assertThat(sut0.getRadius(), is(1.0));
+
+        //***** With Radius *****
+        // SetUp
+        SphereRandomPointGenerator sut1 = SphereRandom.newGenerator(dim, 2.0);
+        // Verify
+        assertThat(sut1.getRadius(), is(2.0));
     }
 
-    @Test
-    public void testDim3GeneratorCreatesLength4Array(){
+    @Theory
+    public void newRandomPointMethod_CreatesArrayWhoseLengthIsDimPlus1(int dim){
         // SetUp
-        SphereRandomPointGenerator sut = SphereRandom.newGenerator(3);
+        SphereRandomPointGenerator sut = SphereRandom.newGenerator(dim);
         // Exercise
         double[] x = sut.newRandomPoint();
         // Verify
-        assertThat(x.length, is(4));
+        assertThat(x.length, is(dim+1));
+    }
+
+    @Theory
+    public void newRandomPointMethodWithRadius_CreatesArrayWhoseLengthIsDimPlus1(int dim){
+        // SetUp
+        SphereRandomPointGenerator sut = SphereRandom.newGenerator(dim, 2.0);
+        // Exercise
+        double[] x = sut.newRandomPoint();
+        // Verify
+        assertThat(x.length, is(dim+1));
     }
 }

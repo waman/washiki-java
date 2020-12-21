@@ -2,9 +2,6 @@ package org.waman.washiki;
 
 import java.util.Random;
 
-import static java.lang.Math.*;
-import static org.waman.washiki.WashikiUtil.*;
-
 public class SphereRandom {
 
     public static SphereRandomPointGenerator newGenerator(int dim){
