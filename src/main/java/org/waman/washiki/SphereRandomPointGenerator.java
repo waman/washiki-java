@@ -42,20 +42,20 @@ abstract class UnitSphereRandomPointGenerator implements SphereRandomPointGenera
         return this.rand.nextDouble(TWO_PI);
     }
 
-    protected final void setRandomPointOnCircumference(double[] x, int start){
+    protected final void setRandomPointOnCircumference(double[] x){
         double phi = nextPhi();
-        x[start] = sin(phi);
-        x[start+1] = cos(phi);
+        x[0] = sin(phi);
+        x[1] = cos(phi);
     }
 
-    protected final void setRandomPointOnSphere(double[] x, int start){
+    protected final void setRandomPointOnSphere(double[] x){
         double phi = nextPhi();
         double sinTheta = this.getRandomGenerator().nextDouble(-1.0, 2.0);  // uniform distribution in [-1, 1] (min:-1.0, width:2.0)
         double cosTheta = sqrt(1 - sinTheta * sinTheta);
 
-        x[start] = sinTheta;
-        x[start+1] = cosTheta * sin(phi);
-        x[start+2] = cosTheta * cos(phi);
+        x[0] = sinTheta;
+        x[1] = cosTheta * sin(phi);
+        x[2] = cosTheta * cos(phi);
     }
 }
 
@@ -66,8 +66,8 @@ class UnitCircumferenceRandomPointGenerator extends UnitSphereRandomPointGenerat
     }
 
     @Override
-    public void setRandomPoint(double[] x, int start){
-        setRandomPointOnCircumference(x, start);
+    public void setRandomPoint(double[] x){
+        setRandomPointOnCircumference(x);
     }
 }
 
@@ -78,8 +78,8 @@ class UnitSphere2DRandomPointGenerator extends UnitSphereRandomPointGenerator {
     }
 
     @Override
-    public void setRandomPoint(double[] x, int start){
-        setRandomPointOnSphere(x, start);
+    public void setRandomPoint(double[] x){
+        setRandomPointOnSphere(x);
     }
 }
 
@@ -90,39 +90,37 @@ class UnitHypersphereRandomPointGenerator extends UnitSphereRandomPointGenerator
     }
 
     @Override
-    public void setRandomPoint(double[] x, int start){
-        setRandomPoint(x, start, this.getDimension());
+    public void setRandomPoint(double[] x){
+        setRandomPoint(x, this.getDimension());
     }
 
-    private void setRandomPoint(double[] x, int start, int dim){
+    private void setRandomPoint(double[] x, int dim){
         switch(dim){
             case 1:
                 throw new IllegalArgumentException("Argument array must have at least 2 length.");
             case 2:
-                setRandomPointOnCircumference(x, start);break;
+                setRandomPointOnCircumference(x);break;
             case 3:
-                setRandomPointOnSphere(x, start);break;
+                setRandomPointOnSphere(x);break;
             default:
-                setRandomPointOnHypersphere(x, start, dim);
+                setRandomPointOnHypersphere(x, dim);
         }
     }
 
-    private void setRandomPointOnHypersphere(double[] x, int start, int dim){
-        setRandomPoint(x, start, dim-2);  // generate the uniform distribution on (n-3)-sphere
+    private void setRandomPointOnHypersphere(double[] x, int dim){
+        setRandomPoint(x, dim-2);  // generate the uniform distribution on (n-3)-sphere
 
         double phi = nextPhi();
         double theta = this.getRandomGenerator().nextDouble();
         double sinTheta = pow(theta, 1.0/(dim-2.0));
         double cosTheta = sqrt(1 - sinTheta * sinTheta);
 
-        int end = start+dim;
-
-        for(int i = start, n =end-2; i < n; i++) {
+        for(int i = 0, n =dim-2; i < n; i++) {
             x[i] *= sinTheta;
         }
 
-        x[end-2] = cosTheta * sin(phi);
-        x[end-1] = cosTheta * cos(phi);
+        x[dim-2] = cosTheta * sin(phi);
+        x[dim-1] = cosTheta * cos(phi);
     }
 }
 
@@ -152,8 +150,8 @@ class ScaleSphereRandomPointGenerator implements SphereRandomPointGenerator{
     }
 
     @Override
-    public void setRandomPoint(double[] x, int start) {
-        this.rand.setRandomPoint(x, start);
-        scale(x, this.radius, start, this.getDimension());
+    public void setRandomPoint(double[] x) {
+        this.rand.setRandomPoint(x);
+        scale(x, this.radius, this.getDimension()+1);
     }
 }

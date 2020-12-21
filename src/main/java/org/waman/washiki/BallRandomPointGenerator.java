@@ -36,8 +36,8 @@ class UnitBall1DRandomPointGenerator implements BallRandomPointGenerator{
     }
 
     @Override
-    public void setRandomPoint(double[] x, int start) {
-        x[start] = this.rand.nextDouble(-1.0, 2.0);
+    public void setRandomPoint(double[] x) {
+        x[0] = this.rand.nextDouble(-1.0, 2.0);
     }
 }
 
@@ -70,9 +70,9 @@ class UnitBallRandomPointGenerator implements BallRandomPointGenerator {
     /**
      * @param x array to which coordinate of a random point in n-ball (n >= 2)
      */
-    public void setRandomPoint(double[] x, int start) {
-        this.rand.setRandomPoint(x, start);
-        scale(x, pow(getRandomGenerator().nextDouble(), 1.0 / this.dim), start, this.dim);
+    public void setRandomPoint(double[] x) {
+        this.rand.setRandomPoint(x);
+        scale(x, pow(getRandomGenerator().nextDouble(), 1.0 / this.dim), this.dim);
     }
 }
 
@@ -102,8 +102,8 @@ class ScaleBall1DRandomPointGenerator implements BallRandomPointGenerator{
     }
 
     @Override
-    public void setRandomPoint(double[] x, int start) {
-        x[start] = this.rand.nextDouble(-1.0, 2.0) * this.radius;
+    public void setRandomPoint(double[] x) {
+        x[0] = this.rand.nextDouble(-1.0, 2.0) * this.radius;
     }
 }
 
@@ -138,9 +138,9 @@ class ScaleBallRandomPointGenerator implements BallRandomPointGenerator {
     /**
      * @param x array to which coordinate of a random point in n-ball (n >= 2)
      */
-    public void setRandomPoint(double[] x, int start){
-        this.rand.setRandomPoint(x, start);
+    public void setRandomPoint(double[] x){
+        this.rand.setRandomPoint(x);
         double s = pow(getRandomGenerator().nextDouble(), 1.0/this.dim) * this.radius;
-        scale(x, s, start, this.dim);
+        scale(x, s, this.dim);
     }
 }

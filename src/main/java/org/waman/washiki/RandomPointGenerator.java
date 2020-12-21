@@ -8,15 +8,7 @@ public interface RandomPointGenerator extends Supplier<double[]>{
     double getRadius();
     RandomGenerator getRandomGenerator();
 
-    /**
-     * @param x array to which coordinate of a random point on (n-1)-sphere (n >= 2) is set.
-     * @param start
-     */
-    void setRandomPoint(double[] x, int start);
-
-    default void setRandomPoint(double[] x){
-        setRandomPoint(x, 0);
-    }
+    void setRandomPoint(double[] x);
 
     double[] newRandomPoint();
 
