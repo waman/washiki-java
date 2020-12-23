@@ -2,9 +2,6 @@ package org.waman.washiki;
 
 import java.util.Random;
 
-import static java.lang.Math.pow;
-import static org.waman.washiki.WashikiUtil.*;
-
 public class BallRandom {
 
     public static BallRandomPointGenerator newGenerator(int dim){

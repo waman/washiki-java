@@ -1,11 +1,14 @@
 package org.waman.washiki;
 
+import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
-import static org.hamcrest.CoreMatchers.is;
+import java.util.Arrays;
+
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(Theories.class)
@@ -15,7 +18,7 @@ public class SphereRandomGeneratorTest {
     public static int[] dims = {1, 2, 3, 4, 5};
 
     @Theory
-    public void getDimensionMethod_ReturnsTheProperValue(int dim){
+    public void getDimension_method_should_return_the_proper_value(int dim){
         // SetUp
         SphereRandomPointGenerator sut0 = SphereRandom.newGenerator(dim);
         // Verify
@@ -29,7 +32,7 @@ public class SphereRandomGeneratorTest {
     }
 
     @Theory
-    public void getRadiusMethod_ReturnsTheProperValue(int dim){
+    public void getRadius_method_should_return_the_proper_value(int dim){
         // SetUp
         SphereRandomPointGenerator sut0 = SphereRandom.newGenerator(dim);
         // Verify
@@ -43,7 +46,43 @@ public class SphereRandomGeneratorTest {
     }
 
     @Theory
-    public void newRandomPointMethod_CreatesArrayWhoseLengthIsDimPlus1(int dim){
+    @Test(expected = ArrayIndexOutOfBoundsException.class)
+    public void setRandomPoint_method_should_throw_an_ArrayIndexOutBoundsException_when_an_array_whose_length_is_less_than_dim_is_passed(int dim){
+        // SetUp
+        SphereRandomPointGenerator sut = SphereRandom.newGenerator(dim);
+        double[] x = new double[dim-1];
+        // Exercise
+        sut.setRandomPoint(x);
+    }
+
+    @Theory
+    public void setRandomPoint_method_should_not_affect_the_array_elements_after_dim_th(int dim){
+        // SetUp
+        SphereRandomPointGenerator sut = SphereRandom.newGenerator(dim);
+        double[] x = new double[dim+2];
+        Arrays.fill(x, 10.0);
+        // Exercise
+        sut.setRandomPoint(x);
+        // Verify
+        assertThat(x[dim], is(not(10.0)));
+        assertThat(x[dim+1], is(10.0));
+    }
+
+    @Theory
+    public void setRandomPoint_method_should_not_affect_the_array_elements_after_dim_th_for_non_unit_radius(int dim){
+        // SetUp
+        SphereRandomPointGenerator sut = SphereRandom.newGenerator(dim, 2.0);
+        double[] x = new double[dim+2];
+        Arrays.fill(x, 10.0);
+        // Exercise
+        sut.setRandomPoint(x);
+        // Verify
+        assertThat(x[dim], is(not(10.0)));
+        assertThat(x[dim+1], is(10.0));
+    }
+
+    @Theory
+    public void newRandomPoint_method_should_create_an_array_whose_length_is_dim_plus_1(int dim){
         // SetUp
         SphereRandomPointGenerator sut = SphereRandom.newGenerator(dim);
         // Exercise
@@ -53,7 +92,7 @@ public class SphereRandomGeneratorTest {
     }
 
     @Theory
-    public void newRandomPointMethodWithRadius_CreatesArrayWhoseLengthIsDimPlus1(int dim){
+    public void newRandomPoint_method_should_create_array_whose_length_is_dim_plus_1_for_non_unit_radius(int dim){
         // SetUp
         SphereRandomPointGenerator sut = SphereRandom.newGenerator(dim, 2.0);
         // Exercise

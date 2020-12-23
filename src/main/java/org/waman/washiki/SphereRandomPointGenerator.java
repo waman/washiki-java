@@ -97,10 +97,8 @@ class UnitHypersphereRandomPointGenerator extends UnitSphereRandomPointGenerator
     private void setRandomPoint(double[] x, int dim){
         switch(dim){
             case 1:
-                throw new IllegalArgumentException("Argument array must have at least 2 length.");
-            case 2:
                 setRandomPointOnCircumference(x);break;
-            case 3:
+            case 2:
                 setRandomPointOnSphere(x);break;
             default:
                 setRandomPointOnHypersphere(x, dim);
@@ -108,19 +106,19 @@ class UnitHypersphereRandomPointGenerator extends UnitSphereRandomPointGenerator
     }
 
     private void setRandomPointOnHypersphere(double[] x, int dim){
-        setRandomPoint(x, dim-2);  // generate the uniform distribution on (n-3)-sphere
+        setRandomPoint(x, dim-2);  // generate the uniform distribution on (n-2)-sphere
 
         double phi = nextPhi();
         double theta = this.getRandomGenerator().nextDouble();
         double sinTheta = pow(theta, 1.0/(dim-2.0));
         double cosTheta = sqrt(1 - sinTheta * sinTheta);
 
-        for(int i = 0, n =dim-2; i < n; i++) {
+        for(int i = 0, n = dim-1; i < n; i++) {
             x[i] *= sinTheta;
         }
 
-        x[dim-2] = cosTheta * sin(phi);
-        x[dim-1] = cosTheta * cos(phi);
+        x[dim-1] = cosTheta * sin(phi);
+        x[dim] = cosTheta * cos(phi);
     }
 }
 
