@@ -17,7 +17,7 @@ public class BallRandomTest {
     public static class RandomGeneratorArgumentTest{
 
         @DataPoints
-        public static final int[] dims = {1, 2, 3, 4, 5};
+        public static final int[] dims = {1, 2, 3, 4, 5, 6};
 
         @Theory
         public void newGenerator_method_with_seed_should_return_the_proper_instance(int dim){

@@ -8,14 +8,17 @@ import org.junit.runner.RunWith;
 
 import java.util.Arrays;
 
-import static org.hamcrest.CoreMatchers.*;
+import static java.lang.Math.sqrt;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(Theories.class)
 public class SphereRandomGeneratorTest {
 
     @DataPoints
-    public static int[] dims = {1, 2, 3, 4, 5};
+    public static int[] dims = {1, 2, 3, 4, 5, 6};
 
     @Theory
     public void getDimension_method_should_return_the_proper_value(int dim){
@@ -99,5 +102,23 @@ public class SphereRandomGeneratorTest {
         double[] x = sut.newRandomPoint();
         // Verify
         assertThat(x.length, is(dim+1));
+    }
+
+    @Theory
+    public void generated_points_should_have_the_proper_moments(int dim){
+        // SetUp
+        int n = 1000000;
+        double delta = 2.0/sqrt(n);
+        SphereRandomPointGenerator sut = SphereRandom.newGenerator(dim);
+        PointMoments pm = new PointMoments(dim, 4);
+        // Exercise
+        for (int i = 0; i < n; i++) {
+            pm.addPoint(sut.newRandomPoint());
+        }
+        // Verify
+        Arrays.stream(pm.moments(1)).forEach(m -> assertEquals(0.0, m, delta));
+        Arrays.stream(pm.moments(2)).forEach(m -> assertEquals(1.0/(dim+1), m, delta));
+        Arrays.stream(pm.moments(3)).forEach(m -> assertEquals(0.0, m, delta));
+        Arrays.stream(pm.moments(4)).forEach(m -> assertEquals(3.0/((dim+3)*(dim+1)), m, delta));
     }
 }

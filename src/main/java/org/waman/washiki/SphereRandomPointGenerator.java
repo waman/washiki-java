@@ -106,11 +106,11 @@ class UnitHypersphereRandomPointGenerator extends UnitSphereRandomPointGenerator
     }
 
     private void setRandomPointOnHypersphere(double[] x, int dim){
-        setRandomPoint(x, dim-2);  // generate the uniform distribution on (n-2)-sphere
+        setRandomPoint(x, dim-2);
 
         double phi = nextPhi();
         double theta = this.getRandomGenerator().nextDouble();
-        double sinTheta = pow(theta, 1.0/(dim-2.0));
+        double sinTheta = pow(theta, 1.0/(dim-1));
         double cosTheta = sqrt(1 - sinTheta * sinTheta);
 
         for(int i = 0, n = dim-1; i < n; i++) {
