@@ -17,10 +17,13 @@ import static org.junit.Assert.assertEquals;
 public class BallRandomGeneratorTest {
 
     @DataPoints
-    public static int[] dims = {1, 2, 3, 4, 5, 6};
+    public static final int[] dims = {1, 2, 3, 4, 5, 6};
+
+    @DataPoints
+    public static final double[] radii = {0.5, 1.0, 3.0, 10.0};
 
     @Theory
-    public void getDimension_method_should_return_the_proper_value(int dim){
+    public void getDimension_method_should_return_the_proper_value(int dim, double r){
         // SetUp
         BallRandomPointGenerator sut0 = BallRandom.newGenerator(dim);
         // Verify
@@ -28,13 +31,13 @@ public class BallRandomGeneratorTest {
 
         //***** With Radius *****
         // SetUp
-        BallRandomPointGenerator sut1 = BallRandom.newGenerator(dim, 2.0);
+        BallRandomPointGenerator sut1 = BallRandom.newGenerator(dim, r);
         // Verify
         assertThat(sut1.getDimension(), is(dim));
     }
 
     @Theory
-    public void getRadius_method_should_return_the_proper_value(int dim){
+    public void getRadius_method_should_return_the_proper_value(int dim, double r){
         // SetUp
         BallRandomPointGenerator sut0 = BallRandom.newGenerator(dim);
         // Verify
@@ -42,9 +45,9 @@ public class BallRandomGeneratorTest {
 
         //***** With Radius *****
         // SetUp
-        BallRandomPointGenerator sut1 = BallRandom.newGenerator(dim, 2.0);
+        BallRandomPointGenerator sut1 = BallRandom.newGenerator(dim, r);
         // Verify
-        assertThat(sut1.getRadius(), is(2.0));
+        assertThat(sut1.getRadius(), is(r));
     }
 
     @Theory
@@ -62,25 +65,27 @@ public class BallRandomGeneratorTest {
         // SetUp
         BallRandomPointGenerator sut = BallRandom.newGenerator(dim);
         double[] x = new double[dim+1];
-        Arrays.fill(x, 10.0);
+        double initValue = 7.0;
+        Arrays.fill(x, initValue);
         // Exercise
         sut.setRandomPoint(x);
         // Verify
-        assertThat(x[dim-1], is(not(10.0)));
-        assertThat(x[dim], is(10.0));
+        assertThat(x[dim-1], is(not(initValue)));
+        assertThat(x[dim], is(initValue));
     }
 
     @Theory
-    public void setRandomPoint_method_should_not_affect_the_array_elements_after_dim_th_minus_1_for_non_unit_radius(int dim){
+    public void setRandomPoint_method_should_not_affect_the_array_elements_after_dim_th_minus_1_for_non_unit_radius(int dim, double r){
         // SetUp
-        BallRandomPointGenerator sut = BallRandom.newGenerator(dim, 2.0);
+        BallRandomPointGenerator sut = BallRandom.newGenerator(dim, r);
         double[] x = new double[dim+1];
-        Arrays.fill(x, 10.0);
+        double initValue = 7.0;
+        Arrays.fill(x, initValue);
         // Exercise
         sut.setRandomPoint(x);
         // Verify
-        assertThat(x[dim-1], is(not(10.0)));
-        assertThat(x[dim], is(10.0));
+        assertThat(x[dim-1], is(not(initValue)));
+        assertThat(x[dim], is(initValue));
     }
 
     @Theory
@@ -94,30 +99,48 @@ public class BallRandomGeneratorTest {
     }
 
     @Theory
-    public void newRandomPoint_method_should_create_an_array_whose_length_is_dim_for_non_unit_radius(int dim){
+    public void newRandomPoint_method_should_create_an_array_whose_length_is_dim_for_non_unit_radius(int dim, double r){
         // SetUp
-        BallRandomPointGenerator sut = BallRandom.newGenerator(dim, 2.0);
+        BallRandomPointGenerator sut = BallRandom.newGenerator(dim, r);
         // Exercise
         double[] x = sut.newRandomPoint();
         // Verify
         assertThat(x.length, is(dim));
     }
 
+    public static final int N = 100000;
+    public static final double DELTA = 2.0/sqrt(N);
+
     @Theory
     public void generated_points_should_have_the_proper_moments(int dim){
         // SetUp
-        int n = 1000000;
-        double delta = 2.0/sqrt(n);
         BallRandomPointGenerator sut = BallRandom.newGenerator(dim);
         PointMoments pm = new PointMoments(dim, 4);
         // Exercise
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < N; i++) {
             pm.addPoint(sut.newRandomPoint());
         }
         // Verify
-        Arrays.stream(pm.moments(1)).forEach(m -> assertEquals(0.0, m, delta));
-        Arrays.stream(pm.moments(2)).forEach(m -> assertEquals(1.0/(dim+2), m, delta));
-        Arrays.stream(pm.moments(3)).forEach(m -> assertEquals(0.0, m, delta));
-        Arrays.stream(pm.moments(4)).forEach(m -> assertEquals(3.0/((dim+4)*(dim+2)), m, delta));
+        Arrays.stream(pm.moments(1)).forEach(m -> assertEquals(0.0, m, DELTA));
+        Arrays.stream(pm.moments(2)).forEach(m -> assertEquals(1.0/(dim+2), m, DELTA));
+        Arrays.stream(pm.moments(3)).forEach(m -> assertEquals(0.0, m, DELTA));
+        Arrays.stream(pm.moments(4)).forEach(m -> assertEquals(3.0/((dim+4)*(dim+2)), m, DELTA));
+    }
+
+    @Theory
+    public void generated_points_should_have_the_proper_moments_for_non_unit_radius(int dim, double r){
+        // SetUp
+        BallRandomPointGenerator sut = BallRandom.newGenerator(dim, r);
+        PointMoments pm = new PointMoments(dim, 4);
+        double r2 = r*r;
+        // Exercise
+        for (int i = 0; i < N; i++) {
+            pm.addPoint(sut.newRandomPoint());
+        }
+        // Verify
+        Arrays.stream(pm.moments(1)).forEach(m -> assertEquals(0.0, m, DELTA*r));
+        Arrays.stream(pm.moments(2)).forEach(m -> assertEquals(r2/(dim+2), m, DELTA*r2));
+        Arrays.stream(pm.moments(3)).forEach(m -> assertEquals(0.0, m, DELTA*r*r2));
+        Arrays.stream(pm.moments(4)).forEach(m -> assertEquals(3.0*r2*r2/((dim+4)*(dim+2)), m, DELTA*r2*r2));
     }
 }
